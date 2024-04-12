@@ -1,0 +1,35 @@
+﻿YearStart,YearEnd,LocationDesc,Question,Data_Value,StratificationCategory1,Stratification1
+2017,2017,Ohio,Percent of adults aged 18 years and older who have obesity,30,Income,"Less than $15,000"
+2021,2021,Ohio,Percent of adults aged 18 years and older who have obesity,23,Age (years),65 or older
+2016,2016,Wisconsin,Percent of adults aged 18 years and older who have obesity,45,Income,"$15,000 - $24,999"
+2017,2017,Tennessee,Percent of adults aged 18 years and older who have obesity,21,Income,"Less than $15,000"
+2015,2015,Ohio,Percent of adults aged 18 years and older who have obesity,24,Age (years),45 - 54
+2016,2016,Tennessee,Percent of adults aged 18 years and older who have obesity,35,Age (years),45 - 54
+2012,2012,Tennessee,Percent of adults aged 18 years and older who have obesity,23,Age (years),45 - 54
+2017,2017,Guam,Percent of adults who engage in muscle-strengthening activities on 2 or more days a week,32,Age (years),45 - 54
+2016,2016,Guam,Percent of adults who engage in muscle-strengthening activities on 2 or more days a week,21,Age (years),25-34
+2015,2015,Guam,Percent of adults who engage in muscle-strengthening activities on 2 or more days a week,20.5,Age (years),35-44
+2014,2014,Guam,Percent of adults who engage in muscle-strengthening activities on 2 or more days a week,20.6,Age (years),35-44
+2013,2013,Arkansas,Percent of adults who engage in no leisure-time physical activity,43,Gender,Female
+2013,2013,Guam,Percent of adults who engage in no leisure-time physical activity,32,Gender,Female
+2013,2013,Tennessee,Percent of adults who engage in no leisure-time physical activity,22,Gender,Female
+2013,2013,Wisconsin,Percent of adults who engage in no leisure-time physical activity,12,Gender,Female
+2013,2013,Wyoming,Percent of adults who engage in no leisure-time physical activity,21.4,Gender,Female
+2013,2013,Georgia,Percent of adults who engage in no leisure-time physical activity,13.2,Gender,Female
+2013,2013,Indiana,Percent of adults who engage in no leisure-time physical activity,15.6,Gender,Female
+2013,2013,Utah,Percent of adults who engage in no leisure-time physical activity,12,Gender,Female
+2013,2013,Virginia,Percent of adults who engage in no leisure-time physical activity,8,Gender,Female
+2013,2013,California,Percent of adults who engage in no leisure-time physical activity,9,Gender,Female
+2017,2017,Utah,Percent of adults who engage in no leisure-time physical activity,11.3,Gender,Female
+2017,2017,Utah,Percent of adults who engage in no leisure-time physical activity,11.2,Gender,Female
+2014,2014,Virginia,Percent of adults who engage in no leisure-time physical activity,11.1,Gender,Female
+2013,2013,Montana,Percent of adults aged 18 years and older who have an overweight classification,13.4,Gender,Female
+2017,2017,North Carolina,Percent of adults aged 18 years and older who have an overweight classification,12.5,Gender,Female
+2016,2016,Oklahoma,Percent of adults aged 18 years and older who have an overweight classification,11.7,Gender,Female
+2015,2015,Florida,Percent of adults aged 18 years and older who have an overweight classification,9,Gender,Female
+2017,2017,North Dakota,Percent of adults aged 18 years and older who have an overweight classification,10,Gender,Female
+2014,2014,Iowa,Percent of adults aged 18 years and older who have an overweight classification,12,Gender,Female
+2013,2013,Florida,Percent of adults aged 18 years and older who have an overweight classification,23,Gender,Female
+2017,2017,Hawaii,Percent of adults aged 18 years and older who have an overweight classification,14,Gender,Female
+2018,2018,Missouri,Percent of adults aged 18 years and older who have an overweight classification,12.3,Gender,Female
+2013,2013,Kentucky,Percent of adults aged 18 years and older who have an overweight classification,11.2,Gender,Female
