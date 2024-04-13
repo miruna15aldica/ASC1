@@ -1,3 +1,7 @@
+# Tot acest cod este preluat din fisierul checker.py
+# Pentru testare, in task_runner.py trebuie inlocuita linia
+# self.data = DataIngestor('./nutrition_activity_obesity_usa_subset.csv').data
+# cu self.data = DataIngestor('./unittests/teste.csv').data
 import requests
 import json
 import unittest
@@ -43,6 +47,7 @@ class TestWebserver(unittest.TestCase):
                 else:
                     sleep(poll_interval)
 
+    # Teste pentru fiecare functie in parte
     @unittest.skipIf(ONLY_LAST, "Checking only the last added test")
     def test_states_mean(self):
         self.helper_test_endpoint("states_mean")
@@ -82,8 +87,8 @@ class TestWebserver(unittest.TestCase):
     def helper_test_endpoint(self, endpoint):
         global total_score
 
-        output_dir = f"tests/{endpoint}/output/"
-        input_dir = f"tests/{endpoint}/input/"
+        output_dir = f"tests/{endpoint}/output/" # Calea catre fiserele de output
+        input_dir = f"tests/{endpoint}/input/" # Calea catre fiserele de input
         input_files = os.listdir(input_dir)
 
         test_suite_score = 10
@@ -101,18 +106,15 @@ class TestWebserver(unittest.TestCase):
                 ref_result = json.load(fout)
             
             with self.subTest():
-                # Sending a POST request to the Flask endpoint
                 res = requests.post(f"http://127.0.0.1:5000/api/{endpoint}", json=req_data)
 
                 job_id = res.json()
-                # print(f'job-res is {job_id}')
                 job_id = job_id["job_id"]
 
                 self.check_res_timeout(
                     res_callable = lambda: requests.get(f"http://127.0.0.1:5000/api/get_results/{job_id}"),
                     ref_result = ref_result,
                     timeout_sec = 1)
-
 
 if __name__ == '__main__':
     try:
