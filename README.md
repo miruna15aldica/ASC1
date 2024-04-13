@@ -1,3 +1,0 @@
-# ASC1
-
-Miruna
