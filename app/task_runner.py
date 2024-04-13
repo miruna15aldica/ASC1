@@ -1,11 +1,8 @@
 from queue import Queue
 from threading import Thread, Event
-import time
 from app.data_ingestor import DataIngestor
 import os
 import json
-import logging
-from logging.handlers import RotatingFileHandler
 from threading import Lock
 class Job:
     def __init__(self, id_no, command, question, state=None):
@@ -97,23 +94,22 @@ class TaskRunner(Thread):
     def states_mean(self, data: dict, question: str):
         elem = {} 
         sum = {}
-        datas = [i for i in data if i['Question'] == question] # Filtram datele dupa intrebarea primita
-        for i in datas: 
-            elem[i['LocationDesc']] = 1 + elem.get(i['LocationDesc'], 0) # Numarul de elemente pentru un anumit stat
-            sum[i['LocationDesc']] = float(i['Data_Value']) + sum.get(i['LocationDesc'], 0) # Suma pentru fiecare stat in parte
+        for i in data: 
+            if i['Question'] == question:
+                elem[i['LocationDesc']] = 1 + elem.get(i['LocationDesc'], 0) # Numarul de elemente pentru un anumit stat
+                sum[i['LocationDesc']] = float(i['Data_Value']) + sum.get(i['LocationDesc'], 0) # Suma pentru fiecare stat in parte
         states_mean = {i: sum[i] / elem[i] for i in sum} #  Media
         return dict(sorted(states_mean.items(), key = lambda x : x[1])) # Sortare crescatoare dupa medie
 
     # Comanda pentru requestul /api/state_mean
     def state_mean(self, data: dict, question: str, state: str):
         sum = 0
-        datas = [i for i in data if i['LocationDesc'] == state and  i['Question'] == question]
-        # Filtram datele dupa intrebarea si statul primite ca parametru
-        elem = len(datas) # NUmarul de inregistrari valabile
-        for i in datas:
-            sum += float(i['Data_Value'])
-        mean = sum / elem # Media artimetica
-        return {state : mean} 
+        elem = 0
+        for i in data:
+            if i['LocationDesc'] == state and  i['Question'] == question: 
+                elem += 1
+                sum += float(i['Data_Value'])
+        return {state : sum / elem} 
 
     # Comanda pentru requestul /api/best5
     def best5(self, data: dict, question: str):
@@ -134,11 +130,11 @@ class TaskRunner(Thread):
 
         elem = {} 
         sum = {}
-        data = [i for i in data if i['Question'] == question] # Sortam datele dupa intrebarea cautata
-        for i in data: 
-            state = i['LocationDesc']
-            elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat 
-            sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat
+        for i in data:
+            if i['Question'] == question:
+                state = i['LocationDesc'] 
+                elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat 
+                sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat
         states_mean = {i: sum[i] / elem[i] for i in sum}
         if question in questions_best_is_min:
             return dict(sorted(states_mean.items(), key = lambda x : x[1])[:5]) # Sortare
@@ -163,11 +159,11 @@ class TaskRunner(Thread):
         ] # Intrebarile pentru care best e valoarea maxima
         elem = {} 
         sum = {}
-        data = [i for i in data if i['Question'] == question] # Sortam datele dupa intrebarea cautata
-        for i in data: 
-            state = i['LocationDesc']
-            elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat 
-            sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat
+        for i in data:
+            if i['Question'] == question:
+                state = i['LocationDesc']
+                elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat 
+                sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat
         states_mean = {i: sum[i] / elem[i] for i in sum}
         if question in questions_best_is_min:
             return dict(sorted(states_mean.items(), key = lambda x : x[1])[-5:])
@@ -178,10 +174,10 @@ class TaskRunner(Thread):
     def global_mean(self, data: dict, question: str):
         elem = 0
         sum = 0
-        datas = [i for i in data if i['Question'] == question]  # Sortam datele dupa intrebarea cautata
-        for i in datas:
-            sum += float(i['Data_Value'])
-            elem += 1
+        for i in data:
+            if i['Question'] == question:
+                sum += float(i['Data_Value'])
+                elem += 1
         return {"global_mean": float(sum / elem)} # media aritmetica
 
     # Comanda pentru requestul /api/diff_from_mean
@@ -189,14 +185,14 @@ class TaskRunner(Thread):
         elem_no = 0
         sum1 = 0
         elem = {}
-        sum = {}    
-        datas = [i for i in data if i['Question'] == question] # Sortam datele dupa intrebarea cautata
-        for i in datas: 
-            state = i['LocationDesc']
-            elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat anume
-            sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat anume
-            sum1 += float(i['Data_Value'])
-            elem_no += 1
+        sum = {} 
+        for i in data:
+            if i['Question'] == question:  
+                state = i['LocationDesc']
+                elem[state] = 1 + elem.get(state, 0) # Numarul de elemente pentru un stat anume
+                sum[state] =  float(i['Data_Value']) + sum.get(state, 0) # Suma valorilor pentru un stat anume
+                sum1 += float(i['Data_Value'])
+                elem_no += 1
         mean = float(sum1 / elem_no) # Media globala pentru o intrebare selectata
         states_mean = {i: sum[i] / elem[i] for i in sum}       
         return {j: mean - i for j, i in sorted(states_mean.items(), key = lambda x : x[1])}
@@ -207,28 +203,28 @@ class TaskRunner(Thread):
         sum1 = 0
         state_sum = 0  
         elem_state = 0
-        datas = [i for i in data if i['Question'] == question] # Sortam datele dupa intrebarea cautata
-        for i in datas: 
-            sum1 += float(i['Data_Value'])
-            elem_no += 1
-            if i['LocationDesc'] == state: # Daca in datele respective gasim statul cautat
-                state_sum += float(i['Data_Value'])
-                elem_state += 1
+        for i in data:
+            if i['Question'] == question: 
+                sum1 += float(i['Data_Value'])
+                elem_no += 1
+                if i['LocationDesc'] == state: # Daca in datele respective gasim statul cautat
+                    state_sum += float(i['Data_Value'])
+                    elem_state += 1
         return {state: float(sum1 / elem_no) - state_sum / elem_state}
 
     # Comanda pentru requestul /api/mean_by_category
     def mean_by_category(self, data: list, question: str):
         elem = {}
         mean = {}
-        datas = [i for i in data if i['Question'] == question]
-        for i in datas:
-            per = str((i['LocationDesc'], i['StratificationCategory1'], i['Stratification1'])) # Construim tuplu pe baza inf
-            if not per in mean.keys(): # Daca nu tuplul deja se gaseste in cheile noastre, initializam
-                elem[per] = 1
-                mean[per] = float(i['Data_Value'])
-            else: 
-                mean[per] += float(i['Data_Value'])
-                elem[per] += 1
+        for i in data:
+            if i['Question'] == question:
+                per = str((i['LocationDesc'], i['StratificationCategory1'], i['Stratification1'])) # Construim tuplu pe baza inf
+                if not per in mean.keys(): # Daca nu tuplul deja se gaseste in cheile noastre, initializam
+                    elem[per] = 1
+                    mean[per] = float(i['Data_Value'])
+                else: 
+                    mean[per] += float(i['Data_Value'])
+                    elem[per] += 1
         for i in mean:
             mean[i] = mean[i] / float(elem[i])
         return mean 
@@ -237,15 +233,15 @@ class TaskRunner(Thread):
     def state_mean_by_category(self, data: list, question: str, state: str):
         elem = {}
         mean = {}
-        datas = [i for i in data if i['LocationDesc'] == state and  i['Question'] == question] # Construim tuplul pe baza inf
-        for i in datas:
-            a = str((i['StratificationCategory1'], i['Stratification1']))
-            if a not in mean.keys(): # Daca tuplul nu se gaseste in cheile noastre, initializam
-                elem[str(a)] = 1
-                mean[str(a)] = float(i['Data_Value'])        
-            else: # Daca se gaseste in cheie
-                elem[str(a)] += 1
-                mean[str(a)] += float(i['Data_Value'])
+        for i in data:
+            if i['LocationDesc'] == state and  i['Question'] == question:
+                a = str((i['StratificationCategory1'], i['Stratification1']))
+                if a not in mean.keys(): # Daca tuplul nu se gaseste in cheile noastre, initializam
+                    elem[str(a)] = 1
+                    mean[str(a)] = float(i['Data_Value'])        
+                else: # Daca se gaseste in cheie
+                    elem[str(a)] += 1
+                    mean[str(a)] += float(i['Data_Value'])
         for i in mean:
             mean[i] = mean[i] / float(elem[i])
         result = {state: mean}
